@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>typing-game</title>
+    <link rel="stylesheet" href="src/output.css">
+</head>
+
+<body>
+    <div
+        class=" w-screen h-screen flex justify-center items-center bg-gradient-to-br from-yellow-500 via-pink-400 to-purple-400 ">
+        <div class="w-8/12 lg:w-6/12 pb-20 rounded-3xl bg-slate-100/75 text-indigo-800 text-center shadow-2xl relative">
+            <!-- 対話式ウィンドウid=dialogue -->
+            <div id="dialogue"
+                class="absolute w-full h-full flex justify-center items-center bg-slate-50/75 rounded-3xl hidden">
+                <!-- ゲーム開始前カウントダウン(id=countdown) -->
+                <p class="text-8xl" id="countdown">3</p>
+            </div>
+            <h1 class="capitalize text-center text-4xl mt-4">
+                typing game
+            </h1>
+            <!-- 残り時間id=timer -->
+            <p class="mt-4 mx-0.5">制限時間:<span class="mx-1" id="time">0</span>秒</p>
+            <!-- スコア表示id=score -->
+            <p class="mt-2">正答数:<span class="mx-1" id="score">0</span>個</p>
+            <div
+                class="mt-4  w-11/12 h-16 bg-indigo-500 mx-auto rounded-lg flex justify-center items-center bg-gradient-to-l from-blue-500 to-pink-500">
+                <p class="text-white text-2xl" id="main">スペースキーを押して開始</p>
+            </div>
+            <button class="absolute left-1/3 w-1/3 right-auto bottom-5 bg-pink-500 rounded-lg py-2 px-4 hidden">
+                <p class="text-sm text-white">もう一度プレイする</p>
+            </button>
+        </div>
+    </div>
+    <script src="src/main.js"></script>
+</body>
+
+</html>
