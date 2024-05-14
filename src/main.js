@@ -45,10 +45,13 @@ const random = {
 // 得点の変更はgame.updateScore(x)を用いる
 class Game {
     // state(0.ゲーム開始前/1.ゲーム実行中/2.ゲーム終了後として管理)
+    // ゲームモードperfectMatch、ミスタイプ時に単語毎変更される
     constructor() {
         this.score = 0;
         this.time = 0;
         this.state = 0;
+        this.perfectMatch = false;
+        this.randomChar = false;
     }
     updateScore(score) {
         this.score += score;
@@ -64,6 +67,12 @@ class Game {
     }
     changeState(state) {
         this.state = state;
+    }
+    togglePerfectMatch() {
+        this.perfectMatch = !this.perfectMatch;
+    }
+    toggleRandomChar() {
+        this.randomChar = !this.randomChar;
     }
     start() {}
 }
@@ -154,7 +163,6 @@ function gameStart(button) {
 // ゲーム進行開始の処理(問題文を出力及び判定を開始する)
 function gameMain() {
     window.addEventListener("keydown", charCheck);
-
     createText(target.text);
 }
 // 問題文と判定
@@ -170,6 +178,7 @@ function clearText() {
 function createText(text) {
     clearText();
     text.forEach((letter) => {
+        // 単語を一つづつspanに包んで出力
         const letterNodes = document.createElement("span");
         letterNodes.classList.add("mx-0.5");
         letterNodes.classList.add("text-white");
@@ -177,8 +186,13 @@ function createText(text) {
         letterNodes.textContent = letter;
         MainText.append(letterNodes);
     });
-    addDictionaly();
     target.push();
+    // randomcharがonならランダムな文字列を挿入
+    if (game.randomChar) {
+        target.random();
+    } else {
+        addDictionaly();
+    }
 }
 // 文字列チェック(ゲームのメイン部分の処理)
 function charCheck(e) {
@@ -203,9 +217,23 @@ function charCheck(e) {
                 game.updateTime(1);
             }
         } else {
-            question.classList.remove("text-white");
-            if (!question.classList.contains("text-red-600")) {
-                question.classList.add("text-red-600");
+            if (game.perfectMatch) {
+                const questions = document.querySelectorAll("#main > span");
+                questions.forEach((qs) => {
+                    if (qs.classList.contains("text-white")) {
+                        qs.classList.remove("text-white");
+                    }
+                    if (qs.classList.contains("text-indigo-800")) {
+                        qs.classList.remove("text-indigo-800");
+                    }
+                    qs.classList.add("text-red-600");
+                });
+                setTimeout(createText, 250, target.text);
+            } else {
+                question.classList.remove("text-white");
+                if (!question.classList.contains("text-red-600")) {
+                    question.classList.add("text-red-600");
+                }
             }
         }
     }
@@ -218,6 +246,7 @@ function gameEnd() {
     window.removeEventListener("keydown", charCheck);
     ReplayButton.classList.remove("hidden");
     ReplayButton.addEventListener("click", resetGame);
+    ReplayButton.focus();
 }
 // ゲーム終了後もう一度ボタンを押したときの処理(開始画面と同じものを表示する)
 function resetGame() {
@@ -256,3 +285,38 @@ async function setDictionaly() {
     addDictionaly();
 }
 setDictionaly();
+function setRandomChar() {
+    target.random();
+    target.push();
+    target.random();
+}
+// ゲームモード切り替えのボタン
+
+// ランダム文字列モード
+const randomButton = document.getElementById("toggle-random");
+const randomText = document.getElementById("text-random");
+randomButton.addEventListener("click", toggleRandom);
+function toggleRandom() {
+    game.toggleRandomChar();
+    if (game.randomChar) {
+        setRandomChar();
+        randomText.textContent = "ランダム文字列";
+    } else {
+        setDictionaly();
+        randomText.textContent = "辞書";
+    }
+    randomButton.blur();
+}
+const perfectButton = document.getElementById("toggle-match");
+const perfectText = document.getElementById("text-match");
+// 厳格モード
+perfectButton.addEventListener("click", togglePerfect);
+function togglePerfect() {
+    game.togglePerfectMatch();
+    if (game.perfectMatch) {
+        perfectText.textContent = "問題ごと";
+    } else {
+        perfectText.textContent = "文字ごと";
+    }
+    perfectButton.blur();
+}
