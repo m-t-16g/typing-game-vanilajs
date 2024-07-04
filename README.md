@@ -2,6 +2,8 @@
 
 javascriptで制作した英単語タイピングゲームwebアプリです
 
+http://mercy2g.starfree.jp/resources/typing-game-vanilajs/
+
 ## 使用技術
 
 html css(tailwind) javascript
